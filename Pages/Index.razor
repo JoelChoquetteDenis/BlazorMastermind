@@ -1,0 +1,95 @@
+﻿@page "/"
+
+@code {
+    enum peg { empty, red, blue, yellow, green, white, black }
+    peg[] solution = { peg.yellow, peg.blue, peg.white, peg.red };
+
+    List<peg[]> essais;
+    peg a, b, c, d;
+    peg draggingPeg;
+
+    protected override async Task OnInitializedAsync()
+    {
+        essais = new List<peg[]>();
+
+    }
+
+    void submit(EventArgs e)
+    {
+        peg[] essai = new peg[4];
+        essai[0] = a;
+        essai[1] = b;
+        essai[2] = c;
+        essai[3] = d;
+        essais.Add(essai);
+    }
+
+    string couleur(peg p)
+    {
+        if (p == peg.black) return "black";
+        if (p == peg.blue) return "blue";
+        if (p == peg.green) return "green";
+        if (p == peg.red) return "red";
+        if (p == peg.white) return "white";
+        if (p == peg.yellow) return "yellow";
+        return "gray";
+    }
+
+    int correctPlace (peg[] pegs) {
+
+        int count = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (pegs[i] == solution[i]) count++;
+        }
+
+        return count;
+    }
+
+    int correctColor(peg[] pegs)
+    {
+
+        int count = 0;
+
+        foreach (peg speg in solution)
+        {
+            if (pegs.Contains(speg)) count++;
+            
+        }
+
+        return count;
+    }
+
+}
+
+
+<table>
+    @foreach (peg[] essai in essais)
+    {
+        <tr>
+            @for (int i = 0; i < 4; i++)
+            {
+                peg j = essai[i];
+                <td style="background-color: @couleur(j);">&nbsp;</td>
+            }
+
+            <td>@correctPlace(essai)</td>
+            <td>@correctColor(essai)</td>
+
+        </tr>
+    }
+
+<tr>
+    <td><div dropzone="true" @ondragenter="@(e=>a=draggingPeg)" style="background-color: @couleur(a); width:50px;">&nbsp;</div></td>
+    <td><div dropzone="true" @ondragenter="@(e=>b=draggingPeg)" style="background-color: @couleur(b); width:50px;">&nbsp;</div></td>
+    <td><div dropzone="true" @ondragenter="@(e=>c=draggingPeg)" style="background-color: @couleur(c); width:50px;">&nbsp;</div></td>
+    <td><div dropzone="true" @ondragenter="@(e=>d=draggingPeg)" style="background-color: @couleur(d); width:50px;">&nbsp;</div></td>
+</tr>
+</table>
+<button @onclick="submit">valider</button>
+@foreach (peg p in (peg[])Enum.GetValues(typeof(peg)))
+{
+    <div draggable="true" style="background-color: @couleur(p); width: 50px;"   @ondragstart="@(e => draggingPeg = p)">&nbsp;</div>
+}
+selected :  <div  style="background-color: @couleur(draggingPeg); width: 50px;">&nbsp;</div>
